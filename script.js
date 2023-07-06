@@ -15,8 +15,40 @@ async function searchImages(){
     const response = await fetch(url)
     const data = await response.json()
 
-    const result = data.results;
-    
+    const results = data.results;
 
+    if (page === 1){
+        searchResult.innerHTML = "";
+    }
 
+    results.map((result) => {
+        const imageWrapper = document.createElement("div");
+        const image = document.createElement("img");
+        const imageLink = document.createElement("a");
+        imageWrapper.classList.add("search-result");
+        image.src = results.urls.small;
+        image.alt = results.alt_description;
+        imageLink.href = results.links.html;
+        imageLink.target = "_blank";
+        imageLink.textContent = results.alt_description;
+
+        imageWrapper.appendChild(image);
+        imageWrapper.appendChild(imageLink);
+        imageWrapper.appendChild(imageWrapper);
+    });
+
+    page++;
+    if(page > 1){
+        showMore.style.display = "block";
+    }
 }
+
+formElmt.addEventListener("submit", (event) => {
+    event.preventDefault();
+    page = 1;
+    searchImages();
+});
+
+showMore.addEventListener("click", (event) =>{ 
+    searchImages();
+});
