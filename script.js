@@ -2,15 +2,15 @@ const accessKey = "krsyjkA73T4_vDrNYQCo9wGr4AzqX_3UFIn2NMDut2Q";
 
 const formElmt = document.querySelector("form");
 const inputElement = document.getElementById("search-input");
-const searchResult = document.querySelector(".search-results");
+const searchResults = document.querySelector(".search-results");
 const showMore = document.getElementById("show-more-button");
 
 let inputData = "";
 let page = 1;
 async function searchImages(){
-    inputData = inputElement;
+    inputData = inputElement.value;
     
-    const url = `https://api.unsplash.com/photos?page=${page}&query=${inputData}&client_id=${accessKey}`;
+    const url = `https://api.unsplash.com/search/photos?page=${page}&query=${inputData}&client_id=${accessKey}`;
 
     const response = await fetch(url)
     const data = await response.json()
@@ -18,23 +18,25 @@ async function searchImages(){
     const results = data.results;
 
     if (page === 1){
-        searchResult.innerHTML = "";
+        searchResults.innerHTML = "";
     }
 
     results.map((result) => {
         const imageWrapper = document.createElement("div");
-        const image = document.createElement("img");
-        const imageLink = document.createElement("a");
         imageWrapper.classList.add("search-result");
-        image.src = results.urls.small;
-        image.alt = results.alt_description;
-        imageLink.href = results.links.html;
-        imageLink.target = "_blank";
-        imageLink.textContent = results.alt_description;
 
+        const image = document.createElement("img");
+        image.src = result.urls.small;
+        image.alt = result.alt_description;
+
+        const imageLink = document.createElement("a");
+        imageLink.href = result.links.html;
+        imageLink.target = "_blank";
+        imageLink.textContent = result.alt_description;
+
+        searchResults.appendChild(imageWrapper);
         imageWrapper.appendChild(image);
         imageWrapper.appendChild(imageLink);
-        imageWrapper.appendChild(imageWrapper);
     });
 
     page++;
@@ -49,6 +51,6 @@ formElmt.addEventListener("submit", (event) => {
     searchImages();
 });
 
-showMore.addEventListener("click", (event) =>{ 
+showMore.addEventListener("click", () =>{ 
     searchImages();
 });
